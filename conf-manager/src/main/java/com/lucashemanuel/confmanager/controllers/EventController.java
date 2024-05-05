@@ -1,5 +1,7 @@
 package com.lucashemanuel.confmanager.controllers;
 
+import com.lucashemanuel.confmanager.dto.attendee.AttendeeIdDTO;
+import com.lucashemanuel.confmanager.dto.attendee.AttendeeRequestDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -42,6 +44,15 @@ public class EventController {
     var uri = uriComponentsBuilder.path("/events/{id}").buildAndExpand(eventIdDTO.eventId()).toUri();
     return ResponseEntity.created(uri).body(eventIdDTO);
   }
+  @PostMapping("/{eventId}/attendees")
+  public ResponseEntity<AttendeeIdDTO> registerParticipant(@PathVariable String eventId, @RequestBody AttendeeRequestDTO body,
+                                                           UriComponentsBuilder uriComponentsBuilder) {
+    AttendeeIdDTO attendeeIdDTO = this.eventService.registerAttendeeOnEvent(eventId, body);
+
+    var uri = uriComponentsBuilder.path("/attendees/{attendId}/badge").buildAndExpand(attendeeIdDTO.attendeeId()).toUri();
+    return ResponseEntity.created(uri).body(attendeeIdDTO);
+  }
+
 
   @GetMapping("/attendees/{id}")
   public ResponseEntity<AttendeesListResponseDTO> getEventAttendees(@PathVariable String id) {
